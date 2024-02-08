@@ -1,0 +1,55 @@
+openapi: 3.0.3
+info:
+  title: Store API
+  description: API for the store exercise
+basePath: /
+paths:
+  /products:
+    get:
+      description: Returns a list of products
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        500:
+          description: Internal Server Error
+  /users:
+    get:
+      description: Returns a list of customers
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        500:
+          description: Internal Server Error
+  /employees:
+    get:
+      description: Returns the employee with the given email and password
+      parameters:
+        - name: email
+          in: query
+          description: Employee email
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: Employee password
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        500:
+          description: Internal Server Error

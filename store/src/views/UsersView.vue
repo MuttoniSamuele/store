@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { users } from '../logic/apiData.js';
+import { getUsers } from '../logic/api.js';
 
 export default {
   data() {
@@ -34,8 +34,11 @@ export default {
         { key: 'phone', title: 'Phone' },
         { key: 'actions', title: 'Actions', sortable: false },
       ],
-      users: users
+      users: []
     }
   },
+  async mounted() {
+    this.users = await getUsers();
+  }
 }
 </script>

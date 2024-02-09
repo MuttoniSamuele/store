@@ -78,7 +78,7 @@ const MARGIN = 20;
 </style>
 
 <script>
-import { users } from '../logic/apiData.js';
+import { getUsers } from '../logic/api.js';
 
 export default {
   data() {
@@ -86,9 +86,9 @@ export default {
       user: null,
     }
   },
-  mounted() {
+  async mounted() {
     const id = parseInt(this.$route.params.id);
-    for (const user of users) {
+    for (const user of await getUsers()) {
       if (user.id === id) {
         this.user = user;
         break;

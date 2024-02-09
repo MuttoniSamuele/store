@@ -7,8 +7,6 @@ import ProductsList from "../components/ProductsList.vue";
 </template>
 
 <script>
-import { products } from '../logic/apiData.js';
-
 export default {
   data() {
     return {
@@ -18,7 +16,7 @@ export default {
   },
   mounted() {
     this.category = this.$route.params.category;
-    this.filteredProducts = products.filter((p) => p.category === this.category);
+    this.filteredProducts = getProducts().filter((p) => p.category === this.category);
   }
 }
 </script>

@@ -4,7 +4,7 @@ import mysql from "mysql";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 
-const PORT = 8080;
+const PORT = 3000;
 
 const swaggerDocument = YAML.load("swagger.yaml");
 
@@ -42,6 +42,20 @@ app.get("/products", (_req, res) => {
   });
 });
 
+app.get("/products/:category", (req, res) => {
+  const category = req.params.category;
+  const QUERY = `SELECT * FROM products WHERE productLine = '${category}';`
+  console.log(QUERY);
+  db.query(QUERY, (err, results) => {
+    if (err) {
+      console.log(`Error in query: ${err}`);
+      res.status(500).send("Internal Server Error");
+      return;
+    }
+    res.json(results);
+  });
+});
+
 app.get("/users", (_req, res) => {
   const QUERY = "SELECT * FROM customers;";
   db.query(QUERY, (err, results) => {
@@ -54,10 +68,10 @@ app.get("/users", (_req, res) => {
   });
 });
 
-app.get("/impiegati/:email/:password", (req, res) => {
+app.get("/employees/:email/:password", (req, res) => {
   const email = req.params.email;
   const password = req.params.password;
-  const QUERY = `SELECT * FROM employees WHERE email = ${email} AND pwd = ${password};`;
+  const QUERY = `SELECT * FROM employees WHERE email = "${email}" AND pwd = "${password}";`;
   db.query(QUERY, (err, results) => {
     if (err) {
       console.log(`Error in query: ${err}`);

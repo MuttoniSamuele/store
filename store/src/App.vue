@@ -59,7 +59,6 @@ nav a.router-link-exact-active {
 </style>
 
 <script>
-import { users } from './logic/apiData.js';
 import router from '@/router';
 
 export default {
@@ -77,10 +76,10 @@ export default {
   },
   watch: {
     $route() {
-      const userId = parseInt(localStorage.getItem("userId"));
-      if (!isNaN(userId)) {
-        this.user = users.find((u) => userId === u.id) || null;
-      }
+      // const userId = parseInt(localStorage.getItem("userId"));
+      // if (!isNaN(userId)) {
+      //   this.user = getUsers().find((u) => userId === u.id) || null;
+      // }
     }
   }
 }

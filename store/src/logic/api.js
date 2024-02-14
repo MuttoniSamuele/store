@@ -20,3 +20,7 @@ export async function getProducts(category = null) {
 export async function getUsers() {
   return rawRequest("/users");
 }
+
+export async function getEmployees() {
+  return rawRequest("/employees");
+}

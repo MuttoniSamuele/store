@@ -3,7 +3,8 @@
     <nav>
       <router-link to="/">Login</router-link> |
       <router-link to="/products">Products</router-link> |
-      <router-link to="/users">Users</router-link>
+      <router-link to="/users">Users</router-link> |
+      <router-link to="/employees">Employees</router-link>
     </nav>
     <div class="user">
       <div v-if="user === null">

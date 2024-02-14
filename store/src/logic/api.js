@@ -6,15 +6,15 @@ class ApiException extends Error {
 }
 
 async function rawRequest(path) {
-  const data = await fetch(`localhost:3000${path}`);
+  const data = await fetch(`http://localhost:3000${path}`);
   if (!data.ok) {
     throw new ApiException(`Error fetching ${path}`);
   }
   return await data.json();
 }
 
-export async function getProducts(category) {
-  return rawRequest(category === null "/products");
+export async function getProducts(category = null) {
+  return rawRequest(category === null ? "/products" : `/products/${category}`);
 }
 
 export async function getUsers() {

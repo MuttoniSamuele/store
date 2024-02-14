@@ -45,7 +45,6 @@ app.get("/products", (_req, res) => {
 app.get("/products/:category", (req, res) => {
   const category = req.params.category;
   const QUERY = `SELECT * FROM products WHERE productLine = '${category}';`
-  console.log(QUERY);
   db.query(QUERY, (err, results) => {
     if (err) {
       console.log(`Error in query: ${err}`);
@@ -58,6 +57,18 @@ app.get("/products/:category", (req, res) => {
 
 app.get("/users", (_req, res) => {
   const QUERY = "SELECT * FROM customers;";
+  db.query(QUERY, (err, results) => {
+    if (err) {
+      console.log(`Error in query: ${err}`);
+      res.status(500).send("Internal Server Error");
+      return;
+    }
+    res.json(results);
+  });
+});
+
+app.get("/employees", (_req, res) => {
+  const QUERY = "SELECT * FROM employees;";
   db.query(QUERY, (err, results) => {
     if (err) {
       console.log(`Error in query: ${err}`);

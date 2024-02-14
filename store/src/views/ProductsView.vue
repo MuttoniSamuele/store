@@ -7,13 +7,16 @@ import ProductsList from "../components/ProductsList.vue";
 </template>
 
 <script>
-import { products } from '../logic/apiData.js';
+import { getProducts } from '../logic/api.js';
 
 export default {
   data() {
     return {
-      productsList: products
+      productsList: []
     }
+  },
+  async mounted() {
+    this.productsList = await getProducts();
   }
 }
 </script>

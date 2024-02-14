@@ -32,8 +32,8 @@
 </template>
 
 <script>
-import router from '@/router';
-import { getUsers } from '../logic/api.js';
+// import router from '@/router';
+// import { getUsers } from '../logic/api.js';
 
 export default {
   data: () => ({
@@ -44,13 +44,13 @@ export default {
   }),
   methods: {
     async login() {
-      const user = await getUsers().find((u) => u.email === this.email && u.password === this.password);
-      if (user !== undefined) {
-        localStorage.setItem("userId", user.id);
-        router.push("/products");
-      } else {
-        this.wrongLogin = true;
-      }
+      // const user = await getUsers().find((u) => u.email === this.email && u.password === this.password);
+      // if (user !== undefined) {
+      //   localStorage.setItem("userId", user.id);
+      //   router.push("/products");
+      // } else {
+      //   this.wrongLogin = true;
+      // }
     }
   }
 }

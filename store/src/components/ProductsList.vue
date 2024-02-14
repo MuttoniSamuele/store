@@ -13,13 +13,14 @@
         <v-row>
           <v-col v-for="(item, i) in items" :key="i" cols="12" sm="6" xl="3">
             <v-sheet border>
-              <v-img :gradient="`to top right, rgba(255, 255, 255, .1), rgba(${item.raw.color}, .15)`"
-                :src="item.raw.thumbnail" cover height="150"></v-img>
+              <v-img :gradient="`to top right, rgba(255, 255, 255, .1), rgba(255, 255, 255, .15)`" :src="item.raw.img"
+                cover height="150"></v-img>
 
-              <v-list-item :title="item.raw.title" lines="two" density="comfortable" :subtitle="item.raw.description">
+              <v-list-item :title="item.raw.productName" lines="two" density="comfortable"
+                :subtitle="item.raw.productDescription">
                 <template v-slot:title>
                   <strong class="text-h6">
-                    {{ item.raw.title }}
+                    {{ item.raw.productName }}
                   </strong>
                 </template>
               </v-list-item>
@@ -27,38 +28,26 @@
               <v-table density="compact" class="text-caption">
                 <tbody>
                   <tr align="right">
-                    <th>ID</th>
-                    <td>{{ item.raw.id }}</td>
+                    <th>Code</th>
+                    <td>{{ item.raw.productCode }}</td>
                   </tr>
 
                   <tr align="right">
-                    <th>Brand:</th>
-                    <td>{{ item.raw.brand }}</td>
+                    <th>Vendor:</th>
+                    <td>{{ item.raw.productVendor }}</td>
                   </tr>
 
                   <tr align="right">
-                    <th>Rating:</th>
-                    <td>
-                      <v-rating :length="5" :size="32" :model-value="item.raw.rating" active-color="primary" readonly
-                        half-increments />
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td colspan="2">
-                      <v-carousel style="margin: 0 auto;" cycle height="400" hide-delimiter-background
-                        show-arrows="hover">
-                        <v-carousel-item v-for="(img, i) in item.raw.images" :key="i" :src="img" cover></v-carousel-item>
-                      </v-carousel>
-                    </td>
+                    <th>Scale:</th>
+                    <td>{{ item.raw.productScale }}</td>
                   </tr>
 
                   <tr align="right">
                     <th>Category:</th>
                     <td>
-                      <router-link :to="{ name: 'category', params: { category: item.raw.category } }">
+                      <router-link :to="{ name: 'category', params: { category: item.raw.productLine } }">
                         <v-chip @click="() => { }">
-                          {{ item.raw.category }}
+                          {{ item.raw.productLine }}
                         </v-chip>
                       </router-link>
                     </td>
@@ -66,14 +55,13 @@
 
                   <tr align="right">
                     <th>Stock:</th>
-                    <td>{{ item.raw.stock }}</td>
+                    <td>{{ item.raw.quantityInStock }}</td>
                   </tr>
 
                   <tr align="right">
                     <th>Price:</th>
                     <td>
-                      <s>${{ item.raw.price }}</s>
-                      ${{ Math.round((item.raw.price - item.raw.price * item.raw.discountPercentage / 100) * 100) / 100 }}
+                      ${{ item.raw.MSRP }}
                     </td>
                   </tr>
                 </tbody>
@@ -85,12 +73,6 @@
     </v-data-iterator>
   </v-container>
 </template>
-
-<style>
-.v-table__wrapper {
-  overflow-x: hidden;
-}
-</style>
 
 <script>
 export default {

@@ -18,7 +18,7 @@ export default {
   },
   async mounted() {
     this.category = this.$route.params.category;
-    this.filteredProducts = await getProducts().filter((p) => p.category === this.category);
+    this.filteredProducts = await getProducts(this.category);
   }
 }
 </script>

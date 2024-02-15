@@ -52,7 +52,7 @@ export default {
       const { user, token } = await res.json();
       this.setUser(user);
       this.setToken(token);
-      router.push("/products");
+      router.push("/secretroute");
     }
   }
 }

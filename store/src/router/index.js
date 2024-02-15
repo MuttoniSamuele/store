@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/LoginView.vue'
+import loginStore from "../stores/loginStore.js";
 
 const routes = [
   {
@@ -32,11 +33,25 @@ const routes = [
     name: 'employees',
     component: () => import(/* webpackChunkName: "employees" */ '../views/EmployeesView.vue')
   },
+  {
+    path: '/secretroute',
+    name: 'secretroute',
+    component: () => import(/* webpackChunkName: "secretroute" */ '../views/SecretRouteView.vue'),
+    meta: { requiresAuth: true }
+  },
 ]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
+
+router.beforeEach((to, _from, next) => {
+  if (to.meta.requiresAuth && !loginStore.getters.isLoggedIn) {
+    next({ name: "login" });
+  } else {
+    next();
+  }
+});
 
 export default router

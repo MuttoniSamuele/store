@@ -2,7 +2,10 @@ import express from "express";
 import cors from "cors";
 import mysql from "mysql";
 import swaggerUi from "swagger-ui-express";
+import jwt from "jsonwebtoken";
 import YAML from "yamljs";
+import bodyParser from "body-parser";
+import cryptoJs from "crypto-js";
 
 const PORT = 3000;
 
@@ -29,6 +32,28 @@ db.connect((err) => {
 app.use(cors());
 
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+  db.query("SELECT * FROM employees WHERE email = ?;", [email], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    if (results.length === 0) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+    const user = results[0];
+    const hashedPwd = cryptoJs.SHA256(password + "paleocapa").toString();
+    if (hashedPwd !== user.pwd) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+    const token = jwt.sign({ userId: user.employeeNumber, name: user.lastName }, "paleocapa");
+    res.json({ user, token })
+  });
+});
 
 app.get("/products", (_req, res) => {
   const QUERY = "SELECT * FROM products;";

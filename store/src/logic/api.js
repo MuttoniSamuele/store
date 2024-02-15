@@ -1,3 +1,5 @@
+const API_URL = "http://localhost:3000";
+
 class ApiException extends Error {
   constructor(message) {
     super(message);
@@ -6,7 +8,7 @@ class ApiException extends Error {
 }
 
 async function rawRequest(path) {
-  const data = await fetch(`http://localhost:3000${path}`);
+  const data = await fetch(`${API_URL}${path}`);
   if (!data.ok) {
     throw new ApiException(`Error fetching ${path}`);
   }
@@ -23,4 +25,17 @@ export async function getUsers() {
 
 export async function getEmployees() {
   return rawRequest("/employees");
+}
+
+export async function login(email, password) {
+  return await fetch(`${API_URL}/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: email,
+      password: password
+    }),
+  });
 }

@@ -7,14 +7,14 @@
       <router-link to="/employees">Employees</router-link>
     </nav>
     <div class="user">
-      <div v-if="user === null">
+      <div v-if="!isLoggedIn">
         <router-link to="/">
           <v-btn>Log in</v-btn>
         </router-link>
       </div>
       <div v-else>
         <span class="username">
-          {{ user.username }}
+          {{ user.lastName }}
         </span>
         <v-btn @click="handleLogout">Log out</v-btn>
       </div>
@@ -60,28 +60,20 @@ nav a.router-link-exact-active {
 </style>
 
 <script>
-import router from '@/router';
+// import router from '@/router';
+import { mapGetters } from 'vuex';
 
 export default {
   data() {
     return {
-      user: null
+      lastName: null
     }
   },
   methods: {
-    handleLogout() {
-      localStorage.setItem("userId", "");
-      this.user = null;
-      router.push("/");
-    }
+    handleLogout() { }
   },
-  watch: {
-    $route() {
-      // const userId = parseInt(localStorage.getItem("userId"));
-      // if (!isNaN(userId)) {
-      //   this.user = getUsers().find((u) => userId === u.id) || null;
-      // }
-    }
-  }
+  computed: {
+    ...mapGetters(["isLoggedIn", "user"]),
+  },
 }
 </script>

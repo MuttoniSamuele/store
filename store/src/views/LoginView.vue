@@ -32,8 +32,10 @@
 </template>
 
 <script>
-// import router from '@/router';
-// import { getUsers } from '../logic/api.js';
+import { mapMutations } from 'vuex';
+
+import router from '@/router';
+import { login } from '../logic/api.js';
 
 export default {
   data: () => ({
@@ -43,14 +45,14 @@ export default {
     wrongLogin: false,
   }),
   methods: {
-    async login() {
-      // const user = await getUsers().find((u) => u.email === this.email && u.password === this.password);
-      // if (user !== undefined) {
-      //   localStorage.setItem("userId", user.id);
-      //   router.push("/products");
-      // } else {
-      //   this.wrongLogin = true;
-      // }
+    ...mapMutations(["setUser", "setToken"]),
+    async login(e) {
+      e.preventDefault();
+      const res = await login(this.email, this.password);
+      const { user, token } = await res.json();
+      this.setUser(user);
+      this.setToken(token);
+      router.push("/products");
     }
   }
 }

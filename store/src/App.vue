@@ -14,7 +14,7 @@
       </div>
       <div v-else>
         <span class="username">
-          {{ user.lastName }}
+          {{ user.customerName }}
         </span>
         <v-btn @click="handleLogout">Log out</v-btn>
       </div>

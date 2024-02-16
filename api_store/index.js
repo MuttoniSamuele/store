@@ -38,7 +38,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  db.query("SELECT * FROM employees WHERE email = ?;", [email], (err, results) => {
+  db.query("SELECT * FROM customers WHERE email = ?;", [email], (err, results) => {
     if (err) {
       return res.status(500).json({ error: "Internal Server Error" });
     }

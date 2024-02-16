@@ -7,6 +7,8 @@ import YAML from "yamljs";
 import bodyParser from "body-parser";
 import cryptoJs from "crypto-js";
 
+// TODO: dropdown employees and same email check
+
 const PORT = 3000;
 
 const swaggerDocument = YAML.load("swagger.yaml");
@@ -53,6 +55,40 @@ app.post("/login", (req, res) => {
     const token = jwt.sign({ userId: user.employeeNumber, name: user.lastName }, "paleocapa");
     res.json({ user, token })
   });
+});
+
+app.post("/register", (req, res) => {
+  const {
+    customerName, contactLastName, contactFirstName,
+    phone, addressLine1, addressLine2, city, state,
+    postalCode, country, salesRepEmployeeNumber,
+    creditLimit, email, pwd
+  } = req.body;
+  const hashedPwd = cryptoJs.SHA256(pwd + "paleocapa").toString();
+  db.query(
+    `INSERT INTO customers (
+      customerNumber,
+      customerName, contactLastName, contactFirstName,
+      phone, addressLine1, addressLine2, city, state,
+      postalCode, country, salesRepEmployeeNumber,
+      creditLimit, email, pwd
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+    [
+      Math.floor(Math.random() * 100000000) + 500,
+      customerName, contactLastName, contactFirstName,
+      phone, addressLine1, addressLine2, city, state,
+      postalCode, country, salesRepEmployeeNumber,
+      creditLimit, email, hashedPwd
+    ],
+    (err) => {
+      if (err) {
+        console.log(`Error in query: ${err}`);
+        res.status(500).send("Internal Server Error");
+        return;
+      }
+      res.status(200);
+    }
+  );
 });
 
 app.get("/products", (_req, res) => {

@@ -34,8 +34,28 @@ export async function login(email, password) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      email: email,
-      password: password
+      email,
+      password
+    }),
+  });
+}
+
+export async function register(
+  customerName, contactLastName, contactFirstName,
+  phone, addressLine1, addressLine2, city, state,
+  postalCode, country, salesRepEmployeeNumber,
+  creditLimit, email, pwd
+) {
+  return await fetch(`${API_URL}/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      customerName, contactLastName, contactFirstName,
+      phone, addressLine1, addressLine2, city, state,
+      postalCode, country, salesRepEmployeeNumber,
+      creditLimit, email, pwd
     }),
   });
 }

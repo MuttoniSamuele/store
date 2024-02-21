@@ -66,27 +66,39 @@ app.post("/register", (req, res) => {
   } = req.body;
   const hashedPwd = cryptoJs.SHA256(pwd + "paleocapa").toString();
   db.query(
-    `INSERT INTO customers (
-      customerNumber,
-      customerName, contactLastName, contactFirstName,
-      phone, addressLine1, addressLine2, city, state,
-      postalCode, country, salesRepEmployeeNumber,
-      creditLimit, email, pwd
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-    [
-      Math.floor(Math.random() * 100000000) + 500,
-      customerName, contactLastName, contactFirstName,
-      phone, addressLine1, addressLine2, city, state,
-      postalCode, country, salesRepEmployeeNumber,
-      creditLimit, email, hashedPwd
-    ],
-    (err) => {
+    `SELECT * FROM customers WHERE email = ?;`, [email], (err, results) => {
       if (err) {
         console.log(`Error in query: ${err}`);
         res.status(500).send("Internal Server Error");
         return;
       }
-      res.status(200);
+      if (results.length > 0) {
+        return res.status(409).json({ error: "Email already exists" });
+      }
+      db.query(
+        `INSERT INTO customers (
+          customerNumber,
+          customerName, contactLastName, contactFirstName,
+          phone, addressLine1, addressLine2, city, state,
+          postalCode, country, salesRepEmployeeNumber,
+          creditLimit, email, pwd
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+        [
+          Math.floor(Math.random() * 100000000) + 500,
+          customerName, contactLastName, contactFirstName,
+          phone, addressLine1, addressLine2, city, state,
+          postalCode, country, salesRepEmployeeNumber,
+          creditLimit, email, hashedPwd
+        ],
+        (err) => {
+          if (err) {
+            console.log(`Error in query: ${err}`);
+            res.status(500).send("Internal Server Error");
+            return;
+          }
+          res.status(200);
+        }
+      );
     }
   );
 });

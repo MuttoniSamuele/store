@@ -36,9 +36,11 @@
       <div class="text-subtitle-1 text-medium-emphasis">Country</div>
       <v-text-field v-model="country" density="compact" placeholder="Country" variant="outlined"></v-text-field>
 
-      <div class="text-subtitle-1 text-medium-emphasis">Employee</div>
+      <!-- <div class="text-subtitle-1 text-medium-emphasis">Employee</div>
       <v-text-field v-model="salesRepEmployeeNumber" density="compact" placeholder="Employee"
-        variant="outlined"></v-text-field>
+        variant="outlined"></v-text-field> -->
+
+      <v-autocomplete label="Employee" :items=""></v-autocomplete>
 
       <div class="text-subtitle-1 text-medium-emphasis">Credit limit</div>
       <v-text-field v-model="creditLimit" density="compact" placeholder="Credit limit" variant="outlined"></v-text-field>
@@ -52,6 +54,10 @@
       <v-text-field v-model="password" :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
         :type="visible ? 'text' : 'password'" density="compact" placeholder="Password" variant="outlined"
         @click:append-inner="visible = !visible"></v-text-field>
+
+      <div v-if="error !== null" style="color: red;">
+        {{ error }}
+      </div>
 
       <v-btn block class="mb-8" color="blue" size="large" variant="tonal" @click="register">
         Sign up
@@ -67,7 +73,8 @@
 </template>
 
 <script>
-import { register } from '../logic/api.js';
+import { register, getEmployees } from '../logic/api.js';
+import router from '@/router';
 
 export default {
   data: () => ({
@@ -86,19 +93,27 @@ export default {
     creditLimit: 0,
     email: "",
     password: "",
+    error: null,
+    employeeItems: []
   }),
   methods: {
     async register(e) {
       e.preventDefault();
-      await register(
+      const res = await register(
         this.customerName, this.contactLastName, this.contactFirstName,
         this.phone, this.addressLine1, this.addressLine2, this.city, this.state,
         this.postalCode, this.country, this.salesRepEmployeeNumber,
         this.creditLimit, this.email, this.password
       );
-      // router.push("/secretroute");
+      if (res.ok) {
+        router.push("/");
+      } else {
+        this.error = (await res.json())?.error;
+      }
     }
-
+  },
+  async mounted() {
+    this.employeeItems = await getEmployees();
   }
 }
 </script>

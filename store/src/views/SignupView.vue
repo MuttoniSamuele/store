@@ -36,11 +36,7 @@
       <div class="text-subtitle-1 text-medium-emphasis">Country</div>
       <v-text-field v-model="country" density="compact" placeholder="Country" variant="outlined"></v-text-field>
 
-      <!-- <div class="text-subtitle-1 text-medium-emphasis">Employee</div>
-      <v-text-field v-model="salesRepEmployeeNumber" density="compact" placeholder="Employee"
-        variant="outlined"></v-text-field> -->
-
-      <v-autocomplete label="Employee" :items=""></v-autocomplete>
+      <v-select @update:model-value="(e) => this.selectedEmployee = e" label="Employee" :items="employeeNames"></v-select>
 
       <div class="text-subtitle-1 text-medium-emphasis">Credit limit</div>
       <v-text-field v-model="creditLimit" density="compact" placeholder="Credit limit" variant="outlined"></v-text-field>
@@ -89,20 +85,36 @@ export default {
     state: "",
     postalCode: "",
     country: "",
-    salesRepEmployeeNumber: 0,
     creditLimit: 0,
     email: "",
     password: "",
     error: null,
-    employeeItems: []
+    employeeNames: [],
+    employeeIds: [],
+    selectedEmployee: null,
   }),
   methods: {
     async register(e) {
       e.preventDefault();
+      if (this.email === "") {
+        this.error = "Missing \"email\"";
+        return;
+      }
+      if (this.password === "") {
+        this.error = "Missing \"password\"";
+        return;
+      }
+      const index = this.employeeNames.indexOf(this.selectedEmployee);
+      console.log(index, this.selectedEmployee);
+      if (index < 0) {
+        this.error = "Missing \"employee\"";
+        return;
+      }
+      const salesRepEmployeeNumber = this.employeeIds[index];
       const res = await register(
         this.customerName, this.contactLastName, this.contactFirstName,
         this.phone, this.addressLine1, this.addressLine2, this.city, this.state,
-        this.postalCode, this.country, this.salesRepEmployeeNumber,
+        this.postalCode, this.country, salesRepEmployeeNumber,
         this.creditLimit, this.email, this.password
       );
       if (res.ok) {
@@ -113,7 +125,9 @@ export default {
     }
   },
   async mounted() {
-    this.employeeItems = await getEmployees();
+    const employees = await getEmployees();
+    this.employeeNames = employees.map((e) => e.lastName + e.firstName);
+    this.employeeIds = employees.map((e) => e.employeeNumber);
   }
 }
 </script>

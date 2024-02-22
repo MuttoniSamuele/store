@@ -7,8 +7,6 @@ import YAML from "yamljs";
 import bodyParser from "body-parser";
 import cryptoJs from "crypto-js";
 
-// TODO: dropdown employees and same email check
-
 const PORT = 3000;
 
 const swaggerDocument = YAML.load("swagger.yaml");

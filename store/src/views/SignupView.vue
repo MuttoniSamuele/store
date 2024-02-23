@@ -105,7 +105,6 @@ export default {
         return;
       }
       const index = this.employeeNames.indexOf(this.selectedEmployee);
-      console.log(index, this.selectedEmployee);
       if (index < 0) {
         this.error = "Missing \"employee\"";
         return;

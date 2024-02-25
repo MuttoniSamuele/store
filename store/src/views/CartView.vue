@@ -3,36 +3,30 @@ import ProductsList from "../components/ProductsList.vue"
 </script>
 
 <template>
-  <ProductsList title="Cart" :products="products" />
+  <ProductsList title="Cart" :products="productsList" />
 </template>
 
 <script>
-// import { loadProducts, loadCart, saveCart, saveProducts } from "../logic/localStorage.js";
+import { loadCart, saveCart } from "../logic/localStorage.js";
+import { getProducts } from '../logic/api.js';
 
 export default {
   data() {
     return {
-      products: [],
+      productsList: [],
     }
   },
   methods: {
-    // getProductsInCart() {
-    //   const products = loadProducts() || [];
-    //   const ids = loadCart();
-    //   this.products = products.filter((p) => ids.includes(p.id));
-    // },
-    // buyProducts(selected) {
-    //   const products = loadProducts() || [];
-    //   const boughtIds = products.filter((p) => selected.includes(p.id) && p.stock > 0).map((p) => p.id);
-    //   const ids = loadCart();
-    //   products.forEach((p) => boughtIds.includes(p.id) && p.stock--);
-    //   saveProducts(products);
-    //   saveCart(ids.filter((id) => !boughtIds.includes(id)));
-    //   this.getProductsInCart();
-    // }
+    buyProducts() {
+      // TODO: API request
+      saveCart([]);
+      this.productsList = [];
+    }
   },
-  mounted() {
-    // this.getProductsInCart();
+  async mounted() {
+    const products = await getProducts();
+    const ids = loadCart();
+    this.productsList = products.filter((p) => ids.includes(p.id));
   }
 }
 </script>

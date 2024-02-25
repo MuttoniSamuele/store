@@ -8,11 +8,19 @@ import ProductsList from "../components/ProductsList.vue";
 
 <script>
 import { getProducts } from '../logic/api.js';
+import { loadCart, saveCart } from "../logic/localStorage.js";
 
 export default {
   data() {
     return {
       productsList: []
+    }
+  },
+  methods: {
+    addToCart(id) {
+      const ids = new Set(loadCart());
+      ids.add(id);
+      saveCart(Array.from(ids));
     }
   },
   async mounted() {

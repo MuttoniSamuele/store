@@ -3,7 +3,9 @@ import ProductsList from "../components/ProductsList.vue";
 </script>
 
 <template>
-  <ProductsList title="Products" :products="productsList" />
+  <v-container>
+    <ProductsList title="Products" :products="productsList" productBtnText="Add to cart" @productBtnClick="addToCart" />
+  </v-container>
 </template>
 
 <script>

@@ -15,6 +15,8 @@ import ProductsList from "../components/ProductsList.vue"
 <script>
 import { loadCart, saveCart } from "../logic/localStorage.js";
 import { getProducts, buyProducts } from '../logic/api.js';
+import router from '@/router';
+import { mapGetters } from 'vuex';
 
 export default {
   data() {
@@ -24,8 +26,15 @@ export default {
   },
   methods: {
     async buyAllProducts() {
-      const res = await buyProducts(loadCart());
-      console.log(res.ok)
+      if (!this.isLoggedIn) {
+        router.push("/");
+        return;
+      }
+      const cart = loadCart();
+      if (cart.length === 0) {
+        return;
+      }
+      await buyProducts(cart);
       saveCart([]);
       this.productsList = [];
     },
@@ -40,6 +49,9 @@ export default {
     const products = await getProducts();
     const ids = loadCart();
     this.productsList = products.filter((p) => ids.includes(p.productCode));
-  }
+  },
+  computed: {
+    ...mapGetters(["isLoggedIn"]),
+  },
 }
 </script>

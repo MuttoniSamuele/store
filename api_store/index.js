@@ -164,6 +164,11 @@ app.get("/employees/:email/:password", (req, res) => {
   });
 });
 
+app.post("/buy", (req, res) => {
+  console.log(req.body.productCodes);
+  res.status(200).send("OK");
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -179,12 +179,12 @@ app.post("/buy", (req, res) => {
 
   const queryProdCodes = "(" + prodCodes.map((c) => `'${c}'`).join(", ") + ")";
 
-  function handleDecreaseProds(err, results) {
+  function handleDecreaseProds(err) {
     if (err) {
       sendErr();
       return;
     }
-    res.json(results);
+    res.status(200).send("OK");
   }
 
   function handleCheckAvailability(err, results) {
@@ -206,7 +206,6 @@ app.post("/buy", (req, res) => {
     `SELECT products.quantityInStock FROM products WHERE products.productCode IN ${queryProdCodes} AND products.quantityInStock > 0;`,
     handleCheckAvailability
   );
-  res.status(200).send("OK");
 });
 
 app.listen(PORT, () => {

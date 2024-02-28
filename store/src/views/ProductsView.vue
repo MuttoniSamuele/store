@@ -18,15 +18,14 @@ export default {
       productsList: []
     }
   },
-  methods: {
-    addToCart(id) {
-      const ids = new Set(loadCart());
-      ids.add(id);
-      saveCart(Array.from(ids));
-    }
-  },
   async mounted() {
     this.productsList = await getProducts();
   }
+}
+
+export function addToCart(id) {
+  const ids = new Set(loadCart());
+  ids.add(id);
+  saveCart(Array.from(ids));
 }
 </script>

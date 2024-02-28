@@ -165,10 +165,50 @@ app.get("/employees/:email/:password", (req, res) => {
 });
 
 app.post("/buy", (req, res) => {
-  console.log(req.body.productCodes);
+  const userId = req.body.customerNumber;
+  const prodCodes = req.body.productCodes;
+
+  function sendErr() {
+    res.status(500).send("Internal Server Error");
+  }
+
+  if (!Array.isArray(prodCodes)) {
+    sendErr();
+    return;
+  }
+
+  const queryProdCodes = "(" + prodCodes.map((c) => `'${c}'`).join(", ") + ")";
+
+  function handleDecreaseProds(err, results) {
+    if (err) {
+      sendErr();
+      return;
+    }
+    res.json(results);
+  }
+
+  function handleCheckAvailability(err, results) {
+    if (err) {
+      sendErr();
+      return;
+    }
+    if (results.length === 0) {
+      res.status(400).send("No products left");
+      return;
+    }
+    db.query(
+      `UPDATE products set products.quantityInStock = products.quantityInStock - 1 WHERE products.productCode IN ${queryProdCodes} AND products.quantityInStock > 0;`,
+      handleDecreaseProds
+    );
+  }
+
+  db.query(
+    `SELECT products.quantityInStock FROM products WHERE products.productCode IN ${queryProdCodes} AND products.quantityInStock > 0;`,
+    handleCheckAvailability
+  );
   res.status(200).send("OK");
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT} `);
 });

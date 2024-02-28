@@ -36,6 +36,10 @@ app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+function generateRndId() {
+  return Math.floor(Math.random() * 100000000) + 500;
+}
+
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   db.query("SELECT * FROM customers WHERE email = ?;", [email], (err, results) => {
@@ -82,7 +86,7 @@ app.post("/register", (req, res) => {
           creditLimit, email, pwd
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
         [
-          Math.floor(Math.random() * 100000000) + 500,
+          generateRndId(),
           customerName, contactLastName, contactFirstName,
           phone, addressLine1, addressLine2, city, state,
           postalCode, country, salesRepEmployeeNumber,
@@ -168,18 +172,22 @@ app.post("/buy", (req, res) => {
   const userId = req.body.customerNumber;
   const prodCodes = req.body.productCodes;
 
+  function jsDateToSqlDate(date) {
+    return date.toISOString().slice(0, 19).replace('T', ' ');
+  }
+
   function sendErr() {
     res.status(500).send("Internal Server Error");
   }
 
-  if (!Array.isArray(prodCodes)) {
+  if (!Array.isArray(prodCodes) || !userId) {
     sendErr();
     return;
   }
 
   const queryProdCodes = "(" + prodCodes.map((c) => `'${c}'`).join(", ") + ")";
 
-  function handleDecreaseProds(err) {
+  function handleError(err) {
     if (err) {
       sendErr();
       return;
@@ -192,18 +200,28 @@ app.post("/buy", (req, res) => {
       sendErr();
       return;
     }
-    if (results.length === 0) {
+    if (results.length < prodCodes.length) {
       res.status(400).send("No products left");
       return;
     }
+
     db.query(
-      `UPDATE products set products.quantityInStock = products.quantityInStock - 1 WHERE products.productCode IN ${queryProdCodes} AND products.quantityInStock > 0;`,
-      handleDecreaseProds
+      `UPDATE products set quantityInStock = quantityInStock - 1 WHERE productCode IN ${queryProdCodes} AND quantityInStock > 0;`,
+      handleError
+    );
+
+    const orderDate = new Date();
+    const requiredDate = new Date(orderDate);
+    requiredDate.setDate(requiredDate.getDate() + 7);
+    db.query(
+      `INSERT INTO orders (orderNumber, orderDate, requiredDate, shippedDate, status, customerNumber) VALUES (?, ?, ?, ?, ?, ?);`,
+      [generateRndId(), jsDateToSqlDate(orderDate), jsDateToSqlDate(requiredDate), jsDateToSqlDate(requiredDate), "Shipped", userId],
+      (err) => err && console.log(`Error in query: ${err}`)
     );
   }
 
   db.query(
-    `SELECT products.quantityInStock FROM products WHERE products.productCode IN ${queryProdCodes} AND products.quantityInStock > 0;`,
+    `SELECT quantityInStock FROM products WHERE productCode IN ${queryProdCodes} AND quantityInStock > 0;`,
     handleCheckAvailability
   );
 });

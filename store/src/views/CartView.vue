@@ -34,7 +34,10 @@ export default {
       if (cart.length === 0) {
         return;
       }
-      await buyProducts(cart);
+      const res = await buyProducts(cart, this.user.customerNumber);
+      if (!res.ok) {
+        return;
+      }
       saveCart([]);
       this.productsList = [];
     },
@@ -51,7 +54,7 @@ export default {
     this.productsList = products.filter((p) => ids.includes(p.productCode));
   },
   computed: {
-    ...mapGetters(["isLoggedIn"]),
+    ...mapGetters(["isLoggedIn", "user"]),
   },
 }
 </script>

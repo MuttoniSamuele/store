@@ -60,12 +60,12 @@ export async function register(
   });
 }
 
-export async function buyProducts(productCodes) {
+export async function buyProducts(productCodes, customerNumber) {
   return await fetch(`${API_URL}/buy`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ productCodes })
+    body: JSON.stringify({ productCodes, customerNumber })
   });
 }

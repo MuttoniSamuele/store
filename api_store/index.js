@@ -210,18 +210,27 @@ app.post("/buy", (req, res) => {
       handleError
     );
 
+    const orderNumber = generateRndId();
     const orderDate = new Date();
     const requiredDate = new Date(orderDate);
     requiredDate.setDate(requiredDate.getDate() + 7);
     db.query(
       `INSERT INTO orders (orderNumber, orderDate, requiredDate, shippedDate, status, customerNumber) VALUES (?, ?, ?, ?, ?, ?);`,
-      [generateRndId(), jsDateToSqlDate(orderDate), jsDateToSqlDate(requiredDate), jsDateToSqlDate(requiredDate), "Shipped", userId],
+      [orderNumber, jsDateToSqlDate(orderDate), jsDateToSqlDate(requiredDate), jsDateToSqlDate(requiredDate), "Shipped", userId],
       (err) => err && console.log(`Error in query: ${err}`)
     );
+
+    for (const [i, { productCode, MSRP }] of results.entries()) {
+      db.query(
+        `INSERT INTO orderdetails (orderNumber, productCode, quantityOrdered, priceEach, orderLineNumber) VALUES (?, ?, ?, ?, ?);`,
+        [orderNumber, productCode, 1, MSRP, i + 1],
+        (err) => err && console.log(`Error in query: ${err}`)
+      );
+    }
   }
 
   db.query(
-    `SELECT quantityInStock FROM products WHERE productCode IN ${queryProdCodes} AND quantityInStock > 0;`,
+    `SELECT * FROM products WHERE productCode IN ${queryProdCodes} AND quantityInStock > 0;`,
     handleCheckAvailability
   );
 });
